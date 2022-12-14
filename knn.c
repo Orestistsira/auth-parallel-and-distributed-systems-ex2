@@ -16,26 +16,25 @@ void printArrayInt(int* arr, int size){
     printf("\n");
 }
 
-int* copyArray(int const* src, int len)
-{
+int* copyArray(int const* src, int len){
 	int* p = malloc(len * sizeof(int));
 	memcpy(p, src, len * sizeof(int));
 	return p;
 }
 
-void swapDouble(double *a, double *b) {
+void swapDouble(double *a, double *b){
 	double t = *a;
 	*a = *b;
 	*b = t;
 }
 
-void swapInt(int *a, int *b) {
+void swapInt(int *a, int *b){
 	int t = *a;
 	*a = *b;
 	*b = t;
 }
 
-int partition(double* array, int* otherArray, int low, int high) {
+int partition(double* array, int* otherArray, int low, int high){
   
 	// select the rightmost element as pivot
 	int pivot = array[high];
@@ -66,7 +65,7 @@ int partition(double* array, int* otherArray, int low, int high) {
 	return (i + 1);
 }
 
-void quickSort(double* array, int* otherArray, int low, int high) {
+void quickSort(double* array, int* otherArray, int low, int high){
 	if (low < high) {
 		
 		// find the pivot element such that
@@ -139,6 +138,7 @@ knnresult kNN(double* X, double* Y, int n, int m, int d, int k){
         printArrayDouble(distances, distancesSize);
         printArrayInt(yId, distancesSize);
 
+		//Quicksort distances array and move id elements the same way
         quickSort(distances, yId, i * n, i * n + n - 1);
 
         printArrayDouble(distances, distancesSize);
