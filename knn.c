@@ -18,68 +18,68 @@ void printArrayInt(int* arr, int size){
 
 int* copyArray(int const* src, int len)
 {
-   int* p = malloc(len * sizeof(int));
-   memcpy(p, src, len * sizeof(int));
-   return p;
+	int* p = malloc(len * sizeof(int));
+	memcpy(p, src, len * sizeof(int));
+	return p;
 }
 
 void swapDouble(double *a, double *b) {
-  double t = *a;
-  *a = *b;
-  *b = t;
+	double t = *a;
+	*a = *b;
+	*b = t;
 }
 
 void swapInt(int *a, int *b) {
-  int t = *a;
-  *a = *b;
-  *b = t;
+	int t = *a;
+	*a = *b;
+	*b = t;
 }
 
 int partition(double* array, int* otherArray, int low, int high) {
   
-  // select the rightmost element as pivot
-  int pivot = array[high];
-  
-  // pointer for greater element
-  int i = (low - 1);
+	// select the rightmost element as pivot
+	int pivot = array[high];
+	
+	// pointer for greater element
+	int i = (low - 1);
 
-  // traverse each element of the array
-  // compare them with the pivot
-  for(int j = low; j < high; j++){
-    if(array[j] <= pivot){
-        
-      // if element smaller than pivot is found
-      // swap it with the greater element pointed by i
-      i++;
-      
-      // swap element at i with element at j
-      swapDouble(&array[i], &array[j]);
-      swapInt(&otherArray[i], &otherArray[j]);
-    }
-  }
+	// traverse each element of the array
+	// compare them with the pivot
+	for(int j = low; j < high; j++){
+		if(array[j] <= pivot){
+			
+		// if element smaller than pivot is found
+		// swap it with the greater element pointed by i
+		i++;
+		
+		// swap element at i with element at j
+		swapDouble(&array[i], &array[j]);
+		swapInt(&otherArray[i], &otherArray[j]);
+		}
+	}
 
-  // swap the pivot element with the greater element at i
-  swapDouble(&array[i + 1], &array[high]);
-  swapInt(&otherArray[i + 1], &otherArray[high]);
-  
-  // return the partition point
-  return (i + 1);
+	// swap the pivot element with the greater element at i
+	swapDouble(&array[i + 1], &array[high]);
+	swapInt(&otherArray[i + 1], &otherArray[high]);
+	
+	// return the partition point
+	return (i + 1);
 }
 
 void quickSort(double* array, int* otherArray, int low, int high) {
-  if (low < high) {
-    
-    // find the pivot element such that
-    // elements smaller than pivot are on left of pivot
-    // elements greater than pivot are on right of pivot
-    int pi = partition(array, otherArray, low, high);
-    
-    // recursive call on the left of pivot
-    quickSort(array, otherArray, low, pi - 1);
-    
-    // recursive call on the right of pivot
-    quickSort(array, otherArray, pi + 1, high);
-  }
+	if (low < high) {
+		
+		// find the pivot element such that
+		// elements smaller than pivot are on left of pivot
+		// elements greater than pivot are on right of pivot
+		int pi = partition(array, otherArray, low, high);
+		
+		// recursive call on the left of pivot
+		quickSort(array, otherArray, low, pi - 1);
+		
+		// recursive call on the right of pivot
+		quickSort(array, otherArray, pi + 1, high);
+	}
 }
 
 knnresult kNN(double* X, double* Y, int n, int m, int d, int k){
@@ -95,17 +95,20 @@ knnresult kNN(double* X, double* Y, int n, int m, int d, int k){
     const int xSize = m * d;
     const int ySize = n * d;
 
-    //Init yids O(n)
-    int* yId = (int*) malloc(n * sizeof(int));
+    //Init yids O(n * m)
+    int* yId = (int*) malloc(m * n * sizeof(int));
 
-    for(int j=0;j<n;j++){
-        yId[j] = j;
+    for(int i=0;i<m;i++){
+		for(int j=0;j<n;j++){
+			yId[i * n + j] = j;
+		}
     }
+    
 
     printf("yId: ");
     printArrayInt(yId, n);
 
-    //Init distances O(m x n x d)
+    //Init distances O(m x n x d^3)
     //TODO: calculate distances with other equation
     int distancesSize = n * m;
     double* distances = (double *) malloc(distancesSize * sizeof(double));
@@ -132,36 +135,24 @@ knnresult kNN(double* X, double* Y, int n, int m, int d, int k){
     printArrayDouble(distances, distancesSize);
 
     //calculate knn
-    double* xDist = (double*) malloc(n * sizeof(double));
-
     for(int i=0;i<m;i++){
+        printArrayDouble(distances, distancesSize);
+        printArrayInt(yId, distancesSize);
 
-        for(int j=0;j<n;j++){
-            xDist[j] = distances[i * n + j];
-        }
+        quickSort(distances, yId, i * n, i * n + n - 1);
 
-        printArrayDouble(xDist, n);
-        //TODO: do not copy array
-        int* yIdTemp = copyArray(yId, n);
+        printArrayDouble(distances, distancesSize);
+        printArrayInt(yId, distancesSize);
 
-        quickSort(xDist, yIdTemp, 0, n - 1);
-
-        printArrayDouble(xDist, n);
-        printArrayInt(yIdTemp, n);
-
-        
         for(int j=0;j<k;j++){
-            knn.ndist[i * k + j] = xDist[j];
-            knn.nidx[i * k + j] = yIdTemp[j];
+            knn.ndist[i * k + j] = distances[i * n + j];
+            knn.nidx[i * k + j] = yId[i * n + j];
         }
-
-             
     }
-    free(xDist);
 
     printf("result:\n");
-    printArrayDouble(knn.ndist, m * k);
-    printArrayInt(knn.nidx, m * k);  
+    printArrayDouble(knn.ndist, knnSize);
+    printArrayInt(knn.nidx, knnSize);
 
 
     free(yId);
