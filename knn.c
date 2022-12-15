@@ -87,22 +87,14 @@ void calculateDistances(double* D, double* X, double* Y, int m, int n, int d){
     const int xSize = m * d;
     const int ySize = n * d;
 
-    int xIndex = 0;
-    for(int x=0;x<xSize;x+=d){
-        int yIndex = 0;
-        for(int y=0;y<ySize;y+=d){
-            double sum = 0;
-
-            for(int i=0;i<d;i++){
-                sum += pow(X[x + i] - Y[y + i], 2);
+    for(int i=0;i<m;i++){
+        for(int j=0;j<n;j++){
+            int sum = 0;
+            for(int dim=0;dim<d;dim++){
+                sum += pow(X[i * d + dim] - Y[j * d + dim], 2);
             }
-
-            D[xIndex * m + yIndex] = sqrt(sum);
-
-            yIndex++;
+            D[i * n + j] = sqrt(sum);
         }
-
-        xIndex++;
     }
 }
 
@@ -127,7 +119,7 @@ knnresult kNN(double* X, double* Y, int n, int m, int d, int k){
     const int xSize = m * d;
     const int ySize = n * d;
 
-    //Init distances O(m x n x d^3)
+    //Init distances O(m x n x d)
     int distancesSize = n * m;
     double* D = (double *) malloc(distancesSize * sizeof(double));
     
