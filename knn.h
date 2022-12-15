@@ -2,6 +2,8 @@
 #include <stdlib.h>
 #include <math.h>
 #include <string.h>
+#include <sys/time.h>
+#include <cblas.h>
 
 typedef struct knnresult{
     int* nidx;
