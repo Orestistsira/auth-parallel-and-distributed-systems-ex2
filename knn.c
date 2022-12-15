@@ -7,7 +7,7 @@
 
 void printArrayDouble(double* arr, int size){
     for(int i=0;i<size;i++){
-        printf("%.2f ", arr[i]);
+        printf("%f ", arr[i]);
     }
     printf("\n");
 }
@@ -40,7 +40,7 @@ void swapInt(int *a, int *b){
 int partition(double* array, int* otherArray, int low, int high){
   
 	// select the rightmost element as pivot
-	int pivot = array[high];
+	double pivot = array[high];
 	
 	// pointer for greater element
 	int i = (low - 1);
@@ -49,14 +49,13 @@ int partition(double* array, int* otherArray, int low, int high){
 	// compare them with the pivot
 	for(int j = low; j < high; j++){
 		if(array[j] <= pivot){
-			
-		// if element smaller than pivot is found
-		// swap it with the greater element pointed by i
-		i++;
-		
-		// swap element at i with element at j
-		swapDouble(&array[i], &array[j]);
-		swapInt(&otherArray[i], &otherArray[j]);
+            // if element smaller than pivot is found
+            // swap it with the greater element pointed by i
+            i++;
+            
+            // swap element at i with element at j
+            swapDouble(&array[i], &array[j]);
+            swapInt(&otherArray[i], &otherArray[j]);
 		}
 	}
 
@@ -176,7 +175,7 @@ knnresult kNN(double* X, double* Y, int n, int m, int d, int k){
     //              const int K, const double alpha, const double *A,
     //              const int lda, const double *B, const int ldb,
     //              const double beta, double *C, const int ldc);
-    cblas_dgemm(CblasRowMajor, CblasNoTrans, CblasTrans, m, n, d, -2, X, d, Y, d, 0, B, m);
+    cblas_dgemm(CblasRowMajor, CblasNoTrans, CblasTrans, m, n, d, -2, X, d, Y, d, 0, B, n);
 
     // printArrayDouble(B, distancesSize);
 
@@ -236,6 +235,7 @@ knnresult kNN(double* X, double* Y, int n, int m, int d, int k){
         }
     }
 
+    printf("\n");
     printf("result:\n");
     printArrayDouble(knn.ndist, knnSize);
     printArrayInt(knn.nidx, knnSize);

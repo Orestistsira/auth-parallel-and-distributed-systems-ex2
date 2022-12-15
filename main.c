@@ -1,8 +1,9 @@
-#include "knn.h"
+//#include "knn.h"
+#include "tester.h"
 
 int main(int argc, char** argv){
 
-    const int n = 2;
+    const int n = 3;
     const int m = 2;
     const int d = 3;
     const int k = 1;
@@ -11,7 +12,8 @@ int main(int argc, char** argv){
                   4.0, 5.0, 6.0};
 
     double Y[] = {1.0, 5.0, 2.0,
-                  3.0, 2.0, 4.0};
+                  3.0, 2.0, 4.0,
+                  3.0, 2.0, 5.0};
 
     printArrayDouble(X, m * d);
     printArrayDouble(Y, n * d);
@@ -21,6 +23,6 @@ int main(int argc, char** argv){
 
     free(knn.ndist);
     free(knn.nidx);
-    
+
     return 0;
 }
