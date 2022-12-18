@@ -142,7 +142,8 @@ knnresult kNN(double* X, double* Y, int n, int m, int d, int k){
     for(int i=0;i<m;i++){
         double sumA = 0;
         for(int dim=0;dim<d;dim++){
-            sumA += pow(X[i * d + dim], 2);
+            double value = X[i * d + dim];
+            sumA += value * value;
         }
         A[i] = sumA;
     }
@@ -154,7 +155,8 @@ knnresult kNN(double* X, double* Y, int n, int m, int d, int k){
     for(int j=0;j<n;j++){
         double sumB = 0;
         for(int dim=0;dim<d;dim++){
-            sumB += pow(Y[j * d + dim], 2);
+            double value = Y[j * d + dim];
+            sumB += value * value;
         }
         C[j] = sumB;
     }
@@ -173,21 +175,19 @@ knnresult kNN(double* X, double* Y, int n, int m, int d, int k){
 
     //Calculate D
     for(int i=0;i<m;i++){
-        //A can be done here
         for(int j=0;j<n;j++){
-            //C can be done here
             D[i * n + j] = sqrt(A[i] + B[i * n + j] + C[j]);
         }
     }
-
-    free(A);
-    free(B);
-    free(C);
 
     gettimeofday (&endwtime, NULL);
 
     duration = (double)((endwtime.tv_usec - startwtime.tv_usec)/1.0e6 + endwtime.tv_sec - startwtime.tv_sec);
     printf("[D took %f seconds]\n", duration);
+
+    free(A);
+    free(B);
+    free(C);
 
     printf("D: ");
     printArrayDouble(D, distancesSize);
