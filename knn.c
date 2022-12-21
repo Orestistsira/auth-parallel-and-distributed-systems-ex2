@@ -87,6 +87,7 @@ void calculateDistances(double* D, double* X, double* Y, int m, int n, int d){
     const int xSize = m * d;
     const int ySize = n * d;
 
+    #pragma omp parallel for
     for(int i=0;i<m;i++){
         for(int j=0;j<n;j++){
             int sum = 0;
@@ -130,8 +131,8 @@ knnresult kNN(double* X, double* Y, int n, int m, int d, int k){
     duration = (double)((endwtime.tv_usec - startwtime.tv_usec)/1.0e6 + endwtime.tv_sec - startwtime.tv_sec);
     printf("[D took %f seconds]\n", duration);
 
-    printf("D: ");
-    printArrayDouble(D, distancesSize);
+    // printf("D: ");
+    // printArrayDouble(D, distancesSize);
 
     gettimeofday (&startwtime, NULL);
     
@@ -153,12 +154,12 @@ knnresult kNN(double* X, double* Y, int n, int m, int d, int k){
     double* C = (double *) malloc(n * sizeof(double));
 
     for(int j=0;j<n;j++){
-        double sumB = 0;
+        double sumC = 0;
         for(int dim=0;dim<d;dim++){
             double value = Y[j * d + dim];
-            sumB += value * value;
+            sumC += value * value;
         }
-        C[j] = sumB;
+        C[j] = sumC;
     }
 
     //calculate  - 2 * X*Y.' and put it to B
@@ -189,8 +190,8 @@ knnresult kNN(double* X, double* Y, int n, int m, int d, int k){
     free(B);
     free(C);
 
-    printf("D: ");
-    printArrayDouble(D, distancesSize);
+    // printf("D: ");
+    // printArrayDouble(D, distancesSize);
 
     //Init yids O(n * m)
     int* yId = (int*) malloc(distancesSize * sizeof(int));
@@ -208,18 +209,18 @@ knnresult kNN(double* X, double* Y, int n, int m, int d, int k){
 
     //calculate knn
     for(int i=0;i<m;i++){
-        printf("D: ");
-        printArrayDouble(D, distancesSize);
-        printf("yId: ");
-        printArrayInt(yId, distancesSize);
+        // printf("D: ");
+        // printArrayDouble(D, distancesSize);
+        // printf("yId: ");
+        // printArrayInt(yId, distancesSize);
 
 		//Quicksort D array and move id elements the same way
         quickSort(D, yId, i * n, i * n + n - 1);
 
-        printf("D sorted: ");
-        printArrayDouble(D, distancesSize);
-        printf("yId sorted: ");
-        printArrayInt(yId, distancesSize);
+        // printf("D sorted: ");
+        // printArrayDouble(D, distancesSize);
+        // printf("yId sorted: ");
+        // printArrayInt(yId, distancesSize);
 
         for(int j=0;j<k;j++){
             knn.ndist[i * k + j] = D[i * n + j];
@@ -227,14 +228,14 @@ knnresult kNN(double* X, double* Y, int n, int m, int d, int k){
         }
     }
 
-    printf("\n");
-    printf("result:\n");
-    printArrayDouble(knn.ndist, knnSize);
-    printArrayInt(knn.nidx, knnSize);
+    // printf("\n");
+    // printf("result:\n");
+    // printArrayDouble(knn.ndist, knnSize);
+    // printArrayInt(knn.nidx, knnSize);
 
-    printf("\n");
-    printArrayDouble(X, m * d);
-    printArrayDouble(Y, n * d);
+    // printf("\n");
+    // printArrayDouble(X, m * d);
+    // printArrayDouble(Y, n * d);
 
     free(yId);
     free(D);

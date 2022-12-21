@@ -2,4 +2,4 @@
 
 sudo apt-get install libopenblas-dev
 
-gcc main.c knn.c -lm -lopenblas
+gcc main.c knn.c -lm -lopenblas -fopenmp -O3
