@@ -5,7 +5,6 @@
 #include <sys/time.h>
 #include <cblas.h>
 #include <omp.h>
-#include <mpi.h>
 
 typedef struct knnresult{
     int* nidx;

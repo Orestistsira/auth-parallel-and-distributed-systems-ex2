@@ -1,4 +1,5 @@
 #include "knn.h"
+#include <mpi.h>
 
 knnresult distrAllkNN(double* X, int n, int d, int k){
     int SelfTID, NumTasks, t, data;

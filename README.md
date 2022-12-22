@@ -2,10 +2,10 @@
 
 sudo apt-get install libopenblas-dev
 
-gcc main.c knn.c -lm -lopenblas -fopenmp -O3 -o knn.out
+make knn
 
-./knn.out
+knn run
 
-mpicc  mpiMain.c asyncKnn.c -lm -lopenblas -fopenmp -O3 -o knn-async.out
+make knn-async
 
 mpiexec -n 4 ./knn-async.out
