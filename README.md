@@ -9,3 +9,5 @@ knn run
 make knn-async
 
 mpiexec -n 4 ./knn-async.out
+
+mpirun -np 4 ./knn-async.out

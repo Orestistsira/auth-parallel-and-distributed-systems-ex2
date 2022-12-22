@@ -13,7 +13,7 @@ run:
 	./knn.out
 
 knn-async: mpiMain.c asyncKnn.c
-	$(CC_MPI) $(FLAGS_MPI) mpiMain.c asyncKnn.c -o knn-async.out
+	$(CC_MPI) mpiMain.c asyncKnn.c knn.c $(FLAGS_MPI) -o knn-async.out
 
 clean:
 	$(RM) colorScc

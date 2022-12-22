@@ -5,6 +5,28 @@
 #define DEBUG_STR(str) printf("%s\n", str)
 #define ERROR(msg) fprintf(stderr, "Error: %s\n", msg)
 
+double* getArrayFromTxt(char* filename, int numOfpoints, int dimension){
+    FILE* f;
+        
+    f = fopen(filename, "r");
+    if(f == NULL)
+        return NULL;
+
+    double* Y = (double*) malloc(numOfpoints * dimension * sizeof(double));
+
+    int index = 0;
+    for(int i=0; i<numOfpoints; i++){
+        if(fscanf(f, "%lf %lf\n", &Y[index], &Y[index + 1]) == 0){
+            printf("Error: Cannot read graph!\n");
+        }
+        index += dimension;
+    }
+
+    if (f !=stdin) fclose(f);
+
+    return Y;
+}
+
 void printArrayDouble(double* arr, int size){
     for(int i=0;i<size;i++){
         printf("%f ", arr[i]);
@@ -19,10 +41,12 @@ void printArrayInt(int* arr, int size){
     printf("\n");
 }
 
-int* copyArray(int const* src, int len){
-	int* p = malloc(len * sizeof(int));
-	memcpy(p, src, len * sizeof(int));
-	return p;
+double* copyArray(double const* src, int len){
+    double* p = malloc(len * sizeof(double));
+    if(p == NULL)
+        printf("Error: malloc failed in copy array\n");
+    memcpy(p, src, len * sizeof(double));
+    return p;
 }
 
 void swapDouble(double *a, double *b){
@@ -190,8 +214,12 @@ knnresult kNN(double* X, double* Y, int n, int m, int d, int k){
     free(B);
     free(C);
 
-    // printf("D: ");
-    // printArrayDouble(D, distancesSize);
+    printArrayDouble(X, m * d);
+    printArrayDouble(Y, n * d);
+    printf("\n");
+
+    printf("D: ");
+    printArrayDouble(D, distancesSize);
 
     //Init yids O(n * m)
     int* yId = (int*) malloc(distancesSize * sizeof(int));
