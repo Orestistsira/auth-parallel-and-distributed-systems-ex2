@@ -2,3 +2,5 @@ a.out
 tester.c
 tester.h
 .vscode/
+knn.out
+knn-async.out
