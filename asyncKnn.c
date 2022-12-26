@@ -7,8 +7,8 @@ knnresult distrAllkNN(double* X, int n, int d, int k){
     MPI_Status mpistat;
     MPI_Request mpireq;
 
-    MPI_Comm_size( MPI_COMM_WORLD, &p );
-    MPI_Comm_rank( MPI_COMM_WORLD, &SelfTID );
+    MPI_Comm_size(MPI_COMM_WORLD, &p);
+    MPI_Comm_rank(MPI_COMM_WORLD, &SelfTID);
 
     knnresult knnAll;
     int knnSize = n * k;

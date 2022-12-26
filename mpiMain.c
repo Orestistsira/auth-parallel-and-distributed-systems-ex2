@@ -2,13 +2,12 @@
 #include <mpi.h>
 
 int main(int argc, char** argv){
-    int SelfTID, p, err;
-    MPI_Status mpistat;
+    int SelfTID, p;
 
     MPI_Init(&argc, &argv);
 
-    MPI_Comm_size( MPI_COMM_WORLD, &p );
-    MPI_Comm_rank( MPI_COMM_WORLD, &SelfTID );
+    MPI_Comm_size(MPI_COMM_WORLD, &p);
+    MPI_Comm_rank(MPI_COMM_WORLD, &SelfTID);
 
     const int n = 8 / p;   
     const int d = 2;
@@ -39,7 +38,8 @@ int main(int argc, char** argv){
 
     printf("X of Task %d:\n", SelfTID);
     printArrayDouble(X, n * d);
-        
+    
+    //Get knn result from each process
     knnresult knn = distrAllkNN(X, n, d, k);
 
     sleep(1);
@@ -56,6 +56,7 @@ int main(int argc, char** argv){
         knnAll.m = n * p;
     }
 
+    //Gather all data from each process to task 0
     MPI_Gather(knn.ndist, n * k, MPI_DOUBLE, knnAll.ndist, n * k, MPI_DOUBLE, 0, MPI_COMM_WORLD);
     MPI_Gather(knn.nidx, n * k, MPI_INT, knnAll.nidx, n * k, MPI_INT, 0, MPI_COMM_WORLD);
 
