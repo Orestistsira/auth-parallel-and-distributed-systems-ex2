@@ -114,7 +114,7 @@ void calculateDistances(double* D, double* X, double* Y, int m, int n, int d){
     //#pragma omp parallel for
     for(int i=0;i<m;i++){
         for(int j=0;j<n;j++){
-            int sum = 0;
+            double sum = 0;
             for(int dim=0;dim<d;dim++){
                 sum += pow(X[i * d + dim] - Y[j * d + dim], 2);
             }
@@ -148,17 +148,17 @@ knnresult kNN(double* X, double* Y, int n, int m, int d, int k){
     int distancesSize = n * m;
     double* D = (double *) malloc(distancesSize * sizeof(double));
     
-    gettimeofday (&startwtime, NULL);
-    calculateDistances(D, X, Y, m, n, d);
-    gettimeofday (&endwtime, NULL);
+    // gettimeofday (&startwtime, NULL);
+    // calculateDistances(D, X, Y, m, n, d);
+    // gettimeofday (&endwtime, NULL);
 
-    duration = (double)((endwtime.tv_usec - startwtime.tv_usec)/1.0e6 + endwtime.tv_sec - startwtime.tv_sec);
-    printf("[D took %f seconds]\n", duration);
+    // duration = (double)((endwtime.tv_usec - startwtime.tv_usec)/1.0e6 + endwtime.tv_sec - startwtime.tv_sec);
+    // printf("[D took %f seconds]\n", duration);
 
-    printf("D: ");
-    printArrayDouble(D, distancesSize);
+    // printf("D: ");
+    // printArrayDouble(D, distancesSize);
 
-    gettimeofday (&startwtime, NULL);
+    // gettimeofday (&startwtime, NULL);
     
     //Init distances O(m x n x d)
     //calculate sum(X.^2, 2) and put it to A
@@ -223,8 +223,8 @@ knnresult kNN(double* X, double* Y, int n, int m, int d, int k){
     // printArrayDouble(Y, n * d);
     // printf("\n");
 
-    printf("D: ");
-    printArrayDouble(D, distancesSize);
+    // printf("D: ");
+    // printArrayDouble(D, distancesSize);
 
     //Init yids O(n * m)
     int* yId = (int*) malloc(distancesSize * sizeof(int));
@@ -261,10 +261,10 @@ knnresult kNN(double* X, double* Y, int n, int m, int d, int k){
         }
     }
 
-    printf("\n");
-    printf("result:\n");
-    printArrayDouble(knn.ndist, knnSize);
-    printArrayInt(knn.nidx, knnSize);
+    // printf("\n");
+    // printf("result:\n");
+    // printArrayDouble(knn.ndist, knnSize);
+    // printArrayInt(knn.nidx, knnSize);
 
     // printf("\n");
     // printArrayDouble(X, m * d);

@@ -5,7 +5,7 @@
 knnresult distrAllkNN(double* X, int n, int d, int k){
     int SelfTID, p, err;
     MPI_Status mpistat;
-    MPI_Request mpireq;
+    MPI_Request mpireqSend, mpireqRecv;
 
     MPI_Comm_size(MPI_COMM_WORLD, &p);
     MPI_Comm_rank(MPI_COMM_WORLD, &SelfTID);
@@ -26,10 +26,8 @@ knnresult distrAllkNN(double* X, int n, int d, int k){
     //Allocate Z for the incoming messages
     double* Z = (double *) malloc(n * d * sizeof(double));
 
-    sleep(1);
-
-    printf("Y of Task %d:\n", SelfTID);
-    printArrayDouble(Y, n * d);
+    // printf("Y of Task %d:\n", SelfTID);
+    // printArrayDouble(Y, n * d);
 
     //TODO: Do it without temp arrays
     //Allocate temp arrays to compare the results and find the nearest points
@@ -42,16 +40,14 @@ knnresult distrAllkNN(double* X, int n, int d, int k){
             //Send Y to the next task
             int destTaskId = (SelfTID + 1) % p;
             int tag = 2;
-            err = MPI_Isend(Y, n * d, MPI_DOUBLE, destTaskId, tag, MPI_COMM_WORLD, &mpireq);
+            err = MPI_Isend(Y, n * d, MPI_DOUBLE, destTaskId, tag, MPI_COMM_WORLD, &mpireqSend);
             if(err){
                 printf("Error=%i in MPI_Isend to %i\n", err, destTaskId);
             }
 
             int sourcetaskId = (SelfTID - 1) == -1 ? p - 1 : SelfTID - 1;
-            MPI_Irecv(Z, n * d, MPI_DOUBLE, sourcetaskId, tag, MPI_COMM_WORLD, &mpireq);
+            MPI_Irecv(Z, n * d, MPI_DOUBLE, sourcetaskId, tag, MPI_COMM_WORLD, &mpireqRecv);
         }
-
-        sleep(1);
 
         //Calculate knn for each task
         knnresult knn = kNN(X, Y, n, n, d, k);
@@ -64,13 +60,11 @@ knnresult distrAllkNN(double* X, int n, int d, int k){
             }
         }
 
-        printf("Task %d knn ", SelfTID);
-        printf("result:\n");
-        printArrayDouble(knn.ndist, k * n);
-        printArrayInt(knn.nidx, k * n);
-        printf("\n");
-
-        sleep(1);
+        // printf("Task %d knn ", SelfTID);
+        // printf("result:\n");
+        // printArrayDouble(knn.ndist, k * n);
+        // printArrayInt(knn.nidx, k * n);
+        // printf("\n");
 
         //Calculate knnAll
         for(int i=0;i<n;i++){
@@ -83,8 +77,8 @@ knnresult distrAllkNN(double* X, int n, int d, int k){
                 ndistTemp[tempIndex] = knn.ndist[i * k + j];
                 nidxTemp[tempIndex++] = knn.nidx[i * k + j];
             }
-            printf("Task %d temp:\n", SelfTID);
-            printArrayDouble(ndistTemp, 2 * k);
+            // printf("Task %d temp:\n", SelfTID);
+            // printArrayDouble(ndistTemp, 2 * k);
 
             quickSort(ndistTemp, nidxTemp, 0, 2 * k - 1);
 
@@ -94,25 +88,38 @@ knnresult distrAllkNN(double* X, int n, int d, int k){
             }
         }
 
+        // printf("Task %d knn ", SelfTID);
+        // printf("result all:\n");
+        // printArrayDouble(knnAll.ndist, k * n);
+        // printArrayInt(knnAll.nidx, k * n);
+        // printf("\n");
+
+        
+        if(pass < p - 1){
+            MPI_Wait(&mpireqSend, &mpistat);
+            MPI_Wait(&mpireqRecv, &mpistat);
+        }
+        
         //Receive Z and put it to Y
-        if(pass < p - 1) MPI_Wait(&mpireq, &mpistat);
+        double* temp = Y;
         Y = Z;
+        Z = temp;
+        //DONE?: use pointers, do not copy array
+        //Y = copyArray(Z, n * d);
 
-        sleep(1);
-
-        printf("Y of Task %d changed:\n", SelfTID);
-        printArrayDouble(Y, n * d);
+        // printf("Y of Task %d changed:\n", SelfTID);
+        // printArrayDouble(Y, n * d);
     }
 
-    sleep(1);
-
-    printf("Task %d knn ", SelfTID);
-    printf("result all:\n");
-    printArrayDouble(knnAll.ndist, k * n);
-    printArrayInt(knnAll.nidx, k * n);
-    printf("\n");
+    // printf("\n");
+    // printf("Task %d knn ", SelfTID);
+    // printf("result all:\n");
+    // printArrayDouble(knnAll.ndist, k * n);
+    // printArrayInt(knnAll.nidx, k * n);
+    // printf("\n");
     
     free(X);
+    free(Y);
     free(Z);
     free(ndistTemp);
     free(nidxTemp);
