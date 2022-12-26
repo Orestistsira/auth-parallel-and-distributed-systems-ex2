@@ -109,6 +109,9 @@ knnresult distrAllkNN(double* X, int n, int d, int k){
 
         // printf("Y of Task %d changed:\n", SelfTID);
         // printArrayDouble(Y, n * d);
+
+        free(knn.ndist);
+        free(knn.nidx);
     }
 
     // printf("\n");
