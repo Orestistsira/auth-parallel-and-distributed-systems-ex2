@@ -125,7 +125,7 @@ void calculateDistances(double* D, double* X, double* Y, int m, int n, int d){
 
 knnresult kNN(double* X, double* Y, int n, int m, int d, int k){
     if(k > n){
-        ERROR("k can't be greater than n");
+        ERROR("In kNN, k can't be greater than n");
         exit(1);
     }
 

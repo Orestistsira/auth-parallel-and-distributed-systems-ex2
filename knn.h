@@ -5,6 +5,7 @@
 #include <sys/time.h>
 #include <cblas.h>
 #include <omp.h>
+#include <unistd.h>
 
 typedef struct knnresult{
     int* nidx;
@@ -20,6 +21,8 @@ double* copyArray(double const* src, int len);
 void printArrayDouble(double* arr, int size);
 
 void printArrayInt(int* arr, int size);
+
+void quickSort(double* array, int* otherArray, int low, int high);
 
 knnresult kNN(double* X, double* Y, int n, int m, int d, int k);
 

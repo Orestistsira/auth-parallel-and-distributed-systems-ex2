@@ -10,9 +10,9 @@ int main(int argc, char** argv){
     MPI_Comm_size( MPI_COMM_WORLD, &p );
     MPI_Comm_rank( MPI_COMM_WORLD, &SelfTID );
 
-    const int n = 8 / p;      
+    const int n = 8 / p;   
     const int d = 2;
-    const int k = 2;
+    const int k = 4;
 
     //init all corpus points
     //double* X = getArrayFromTxt("s1.txt", n * p, d);
@@ -33,39 +33,43 @@ int main(int argc, char** argv){
     }
 
     double* X = (double *) malloc(n * d * sizeof(double));
-    double* Xtemp = (double *) malloc(n * d * sizeof(double));
 
-    //task id=0 keeps the last part of Xall
-    if(SelfTID == 0){
-        for(int id=0;id<p;id++){
-
-            for(int i=0;i<n;i++){
-                for(int j=0;j<d;j++){
-                    X[i * d + j] = Xall[id * n * d + i * d + j];
-                }
-            }
-
-            if(id == p - 1) break;
-
-            int destTaskId = id + 1;
-            int tag = 1;
-            err = MPI_Send(X, n * d, MPI_DOUBLE, destTaskId, tag, MPI_COMM_WORLD);
-
-            if(err){
-                printf("Error=%i in MPI_Send to %i\n", err, destTaskId);
-            }
-        }
-    }
-    else{
-        MPI_Recv(X, n * d, MPI_DOUBLE, 0, 1, MPI_COMM_WORLD, &mpistat);
-    }
+    //Distribute Xall to each task
+    MPI_Scatter(Xall, n * d, MPI_DOUBLE, X, n * d, MPI_DOUBLE, 0, MPI_COMM_WORLD);
 
     printf("X of Task %d:\n", SelfTID);
     printArrayDouble(X, n * d);
         
     knnresult knn = distrAllkNN(X, n, d, k);
 
-    free(X);
+    sleep(1);
+
+    knnresult knnAll;
+    knnAll.ndist = NULL;
+    knnAll.nidx = NULL;
+
+    if(SelfTID == 0){
+        int knnSize = n * p * k;
+        knnAll.ndist = (double*) malloc(knnSize * sizeof(double));
+        knnAll.nidx = (int*) malloc(knnSize * sizeof(int));
+        knnAll.k = k;
+        knnAll.m = n * p;
+    }
+
+    MPI_Gather(knn.ndist, n * k, MPI_DOUBLE, knnAll.ndist, n * k, MPI_DOUBLE, 0, MPI_COMM_WORLD);
+    MPI_Gather(knn.nidx, n * k, MPI_INT, knnAll.nidx, n * k, MPI_INT, 0, MPI_COMM_WORLD);
+
+    if(SelfTID == 0){
+        printArrayDouble(knnAll.ndist, n * p * k);
+        printArrayInt(knnAll.nidx, n * p * k);
+    } 
+
+    MPI_Finalize();
+
+    free(knn.ndist);
+    free(knn.nidx);
+    free(knnAll.ndist);
+    free(knnAll.nidx);
 
     return 0;
 }
