@@ -111,7 +111,7 @@ void calculateDistances(double* D, double* X, double* Y, int m, int n, int d){
     const int xSize = m * d;
     const int ySize = n * d;
 
-    #pragma omp parallel for
+    //#pragma omp parallel for
     for(int i=0;i<m;i++){
         for(int j=0;j<n;j++){
             int sum = 0;
@@ -155,8 +155,8 @@ knnresult kNN(double* X, double* Y, int n, int m, int d, int k){
     duration = (double)((endwtime.tv_usec - startwtime.tv_usec)/1.0e6 + endwtime.tv_sec - startwtime.tv_sec);
     printf("[D took %f seconds]\n", duration);
 
-    // printf("D: ");
-    // printArrayDouble(D, distancesSize);
+    printf("D: ");
+    printArrayDouble(D, distancesSize);
 
     gettimeofday (&startwtime, NULL);
     
@@ -171,6 +171,9 @@ knnresult kNN(double* X, double* Y, int n, int m, int d, int k){
             sumA += value * value;
         }
         A[i] = sumA;
+
+        // A[i] = cblas_dnrm2(d, &X[i * d], 1);
+        // A[i] = A[i] * A[i];
     }
 
     //calculate sum(Y.^2, 2).' and put it to C
@@ -184,6 +187,8 @@ knnresult kNN(double* X, double* Y, int n, int m, int d, int k){
             sumC += value * value;
         }
         C[j] = sumC;
+        // C[j] = cblas_dnrm2(d, &Y[j * d], 1);
+        // C[j] = C[j] * C[j];
     }
 
     //calculate  - 2 * X*Y.' and put it to B
@@ -201,22 +206,22 @@ knnresult kNN(double* X, double* Y, int n, int m, int d, int k){
     //Calculate D
     for(int i=0;i<m;i++){
         for(int j=0;j<n;j++){
-            D[i * n + j] = sqrt(A[i] + B[i * n + j] + C[j]);
+            D[i * n + j] = sqrt(fabs(A[i] + B[i * n + j] + C[j]));
         }
     }
 
     gettimeofday (&endwtime, NULL);
 
     duration = (double)((endwtime.tv_usec - startwtime.tv_usec)/1.0e6 + endwtime.tv_sec - startwtime.tv_sec);
-    printf("[D took %f seconds]\n", duration);
+    //printf("[D took %f seconds]\n", duration);
 
     free(A);
     free(B);
     free(C);
 
-    printArrayDouble(X, m * d);
-    printArrayDouble(Y, n * d);
-    printf("\n");
+    // printArrayDouble(X, m * d);
+    // printArrayDouble(Y, n * d);
+    // printf("\n");
 
     printf("D: ");
     printArrayDouble(D, distancesSize);
@@ -232,8 +237,8 @@ knnresult kNN(double* X, double* Y, int n, int m, int d, int k){
     
     // printf("yId: ");
     // printArrayInt(yId, distancesSize);
-    DEBUG_STR("Calculating knn:");
-    DEBUG_STR("------------------------------------------------------");
+    // DEBUG_STR("Calculating knn:");
+    // DEBUG_STR("------------------------------------------------------");
 
     //calculate knn
     for(int i=0;i<m;i++){
@@ -256,10 +261,10 @@ knnresult kNN(double* X, double* Y, int n, int m, int d, int k){
         }
     }
 
-    // printf("\n");
-    // printf("result:\n");
-    // printArrayDouble(knn.ndist, knnSize);
-    // printArrayInt(knn.nidx, knnSize);
+    printf("\n");
+    printf("result:\n");
+    printArrayDouble(knn.ndist, knnSize);
+    printArrayInt(knn.nidx, knnSize);
 
     // printf("\n");
     // printArrayDouble(X, m * d);
