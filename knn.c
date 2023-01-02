@@ -5,24 +5,66 @@
 #define DEBUG_STR(str) printf("%s\n", str)
 #define ERROR(msg) fprintf(stderr, "Error: %s\n", msg)
 
-double* getArrayFromTxt(char* filename, int numOfpoints, int dimension){
-    FILE* f;
+// double* getArrayFromTxt(char* filename, int numOfpoints, int dimensions){
+//     FILE* f;
         
-    f = fopen(filename, "r");
-    if(f == NULL)
-        return NULL;
+//     f = fopen(filename, "r");
+//     if(f == NULL)
+//         return NULL;
 
-    double* Y = (double*) malloc(numOfpoints * dimension * sizeof(double));
+//     double* Y = (double*) malloc(numOfpoints * dimensions * sizeof(double));
 
-    int index = 0;
-    for(int i=0; i<numOfpoints; i++){
-        if(fscanf(f, "%lf %lf\n", &Y[index], &Y[index + 1]) == 0){
-            printf("Error: Cannot read graph!\n");
-        }
-        index += dimension;
+//     int index = 0;
+//     for(int i=0; i<numOfpoints; i++){
+//         if(fscanf(f, "%lf %lf\n", &Y[index], &Y[index + 1]) == 0){
+//             printf("Error: Cannot read graph!\n");
+//         }
+//         index += dimensions;
+//     }
+
+//     if (f !=stdin) fclose(f);
+
+//     return Y;
+// }
+
+double* getArrayFromTxt(char* filename, int numOfpoints, int dimensions, int startingRow, int endingRow){
+    FILE* f;
+
+    int pointsToRead = endingRow - startingRow;
+    double* Y = (double*) malloc(pointsToRead * dimensions * sizeof(double));
+
+    if((f = fopen(filename, "r")) == NULL){
+        printf("File: %s not found\n", filename);
+        exit(1);
     }
 
-    if (f !=stdin) fclose(f);
+    int x = 0;
+    double unusedVar;
+    // Read the data of matrix
+    for (int i=0;i<numOfpoints;i++){
+        if(i < startingRow){
+            for (int j=0;j<dimensions;j++){
+                if(fscanf(f, "%lf", &unusedVar) <= 0){
+                    ERROR("Error scanning file");
+                    exit(1);
+                }
+            }
+            continue;
+        } 
+        if(i >= endingRow) break;
+
+        for (int j=0;j<dimensions;j++){
+            if(fscanf(f, "%lf", &Y[x * dimensions + j]) <= 0){
+                // ERROR("Error scanning file");
+                // exit(1);
+                //to avoid nan values and leave room for sum(DBL_MAX * DBL_MAX) from 0 to d
+                Y[x * dimensions + j] = sqrt(DBL_MAX) / dimensions;
+            }
+        }
+        x++;
+    }
+
+    fclose(f);
 
     return Y;
 }
@@ -91,7 +133,7 @@ int partition(double* array, int* otherArray, int low, int high){
 	return (i + 1);
 }
 
-void quickSort(double* array, int* otherArray, int low, int high){
+void quickSort(double* array, int* otherArray, int low, int high, int k){
 	if (low < high) {
 		
 		// find the pivot element such that
@@ -100,10 +142,13 @@ void quickSort(double* array, int* otherArray, int low, int high){
 		int pi = partition(array, otherArray, low, high);
 		
 		// recursive call on the left of pivot
-		quickSort(array, otherArray, low, pi - 1);
+		quickSort(array, otherArray, low, pi - 1, k);
+
+        //if the k shortest distances are on the left there is no need to short the right part
+        if(pi - low >= k) return;
 		
 		// recursive call on the right of pivot
-		quickSort(array, otherArray, pi + 1, high);
+		quickSort(array, otherArray, pi + 1, high, k);
 	}
 }
 
@@ -248,9 +293,9 @@ knnresult kNN(double* X, double* Y, int n, int m, int d, int k){
         // printArrayInt(yId, distancesSize);
 
 		//Quicksort D array and move id elements the same way
-        quickSort(D, yId, i * n, i * n + n - 1);
+        quickSort(D, yId, i * n, i * n + n - 1, k);
 
-        // printf("D sorted: ");
+        // printf("Ds: ");
         // printArrayDouble(D, distancesSize);
         // printf("yId sorted: ");
         // printArrayInt(yId, distancesSize);

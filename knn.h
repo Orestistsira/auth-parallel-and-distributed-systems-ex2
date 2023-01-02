@@ -7,6 +7,7 @@
 #include <omp.h>
 #include <unistd.h>
 #include <time.h>
+#include <float.h>
 
 typedef struct knnresult{
     int* nidx;
@@ -15,7 +16,7 @@ typedef struct knnresult{
     int k;
 } knnresult;
 
-double* getArrayFromTxt(char* filename, int numOfpoints, int dimension);
+double* getArrayFromTxt(char* filename, int numOfpoints, int dimension, int startingRow, int endingRow);
 
 double* copyArray(double const* src, int len);
 
@@ -23,7 +24,7 @@ void printArrayDouble(double* arr, int size);
 
 void printArrayInt(int* arr, int size);
 
-void quickSort(double* array, int* otherArray, int low, int high);
+void quickSort(double* array, int* otherArray, int low, int high, int k);
 
 knnresult kNN(double* X, double* Y, int n, int m, int d, int k);
 

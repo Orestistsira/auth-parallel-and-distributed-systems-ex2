@@ -1,6 +1,5 @@
 #include "knn.h"
 #include <mpi.h>
-#include <float.h>
 
 knnresult distrAllkNN(double* X, int n, int d, int k){
     int SelfTID, p, err;
@@ -66,10 +65,15 @@ knnresult distrAllkNN(double* X, int n, int d, int k){
         // printArrayInt(knn.nidx, k * n);
         // printf("\n");
 
+        int tempIndex = 0;
         //Calculate knnAll
+        //for current point i, check if there is a shorter distance in knn than those in knnAll
         for(int i=0;i<n;i++){
-            //for current point i, check if there is a shorter distance in knn than those in knnAll
-            int tempIndex = 0;
+            //if the first element of the current distance array is larger than the last element of the global distance array continue
+            //as there is no shorter distances than already calculated
+            if(knn.ndist[i * k] >= knnAll.ndist[i * k + k - 1]) continue;
+
+            tempIndex = 0;
             for(int j=0;j<k;j++){
                 ndistTemp[tempIndex] = knnAll.ndist[i * k + j];
                 nidxTemp[tempIndex++] = knnAll.nidx[i * k + j];
@@ -80,7 +84,7 @@ knnresult distrAllkNN(double* X, int n, int d, int k){
             // printf("Task %d temp:\n", SelfTID);
             // printArrayDouble(ndistTemp, 2 * k);
 
-            quickSort(ndistTemp, nidxTemp, 0, 2 * k - 1);
+            quickSort(ndistTemp, nidxTemp, 0, 2 * k - 1, k);
 
             for(int j=0;j<k;j++){
                 knnAll.ndist[i * k + j] = ndistTemp[j];
