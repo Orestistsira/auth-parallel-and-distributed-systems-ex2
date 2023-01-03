@@ -7,7 +7,7 @@
 
 void printArrayDouble(double* arr, int size){
     for(int i=0;i<size;i++){
-        printf("%f ", arr[i]);
+        printf("%1.1f ", arr[i]);
     }
     printf("\n");
 }
@@ -146,15 +146,15 @@ knnresult kNN(double* X, double* Y, int n, int m, int d, int k){
     double* A = (double *) malloc(m * sizeof(double));
 
     for(int i=0;i<m;i++){
-        double sumA = 0;
-        for(int dim=0;dim<d;dim++){
-            double value = X[i * d + dim];
-            sumA += value * value;
-        }
-        A[i] = sumA;
+        // double sumA = 0;
+        // for(int dim=0;dim<d;dim++){
+        //     double value = X[i * d + dim];
+        //     sumA += value * value;
+        // }
+        // A[i] = sumA;
 
-        // A[i] = cblas_dnrm2(d, &X[i * d], 1);
-        // A[i] = A[i] * A[i];
+        A[i] = cblas_dnrm2(d, &X[i * d], 1);
+        A[i] = A[i] * A[i];
     }
 
     //calculate sum(Y.^2, 2).' and put it to C
@@ -162,14 +162,15 @@ knnresult kNN(double* X, double* Y, int n, int m, int d, int k){
     double* C = (double *) malloc(n * sizeof(double));
 
     for(int j=0;j<n;j++){
-        double sumC = 0;
-        for(int dim=0;dim<d;dim++){
-            double value = Y[j * d + dim];
-            sumC += value * value;
-        }
-        C[j] = sumC;
-        // C[j] = cblas_dnrm2(d, &Y[j * d], 1);
-        // C[j] = C[j] * C[j];
+        // double sumC = 0;
+        // for(int dim=0;dim<d;dim++){
+        //     double value = Y[j * d + dim];
+        //     sumC += value * value;
+        // }
+        // C[j] = sumC;
+        
+        C[j] = cblas_dnrm2(d, &Y[j * d], 1);
+        C[j] = C[j] * C[j];
     }
 
     //calculate  - 2 * X*Y.' and put it to B

@@ -75,8 +75,6 @@ double* getMinstArray(char* filepath, int startingRow, int endingRow){
     }
     //fileRows = 10;
 
-    printf("%d\n", n);
-
     int i, j, k, fd;
     unsigned char *ptr;
 
@@ -87,7 +85,9 @@ double* getMinstArray(char* filepath, int startingRow, int endingRow){
 
     int imageInfo[infoLength];
     
-    read(fd, imageInfo, infoLength * sizeof(int));
+    if(read(fd, imageInfo, infoLength * sizeof(int)) <= 0){
+        printf("Error in reading file\n");
+    }
 
     //free(imageInfo);
 
@@ -105,11 +105,14 @@ double* getMinstArray(char* filepath, int startingRow, int endingRow){
         } 
         if(i >= endingRow) break;
 
-        read(fd, charData[x], d * sizeof(unsigned char));
+        if(read(fd, charData[x], d * sizeof(unsigned char)) <= 0){
+            //printf("Error in reading file\n");
+            for(int j=0;j<d;j++){
+                charData[x][j] = (char)(sqrt(DBL_MAX) / d * 255);
+            }
+        }
         x++;
     }
-
-    printf("here x = %d\n", x);
 
     close(fd);
 
@@ -117,11 +120,9 @@ double* getMinstArray(char* filepath, int startingRow, int endingRow){
 
     for(i=0;i<n;i++){
         for(j=0;j<d;j++){
-            Y[i * n + j] = (double)charData[i][j] / 255.0;
+            Y[i * d + j] = (double)charData[i][j] / 255.0;
         }
     }
-
-    printf("end\n");
     
     return Y;
 }
