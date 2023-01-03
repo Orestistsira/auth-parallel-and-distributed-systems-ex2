@@ -4,7 +4,7 @@ sudo apt-get install libopenblas-dev
 
 make knn
 
-knn run
+make run
 
 make knn-async
 
