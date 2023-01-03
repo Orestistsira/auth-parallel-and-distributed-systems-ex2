@@ -1,6 +1,7 @@
 a.out
 tester.c
 tester.h
+data/
 .vscode/
 knn.out
 knn-async.out
