@@ -27,6 +27,11 @@ int main(int argc, char** argv){
         d = atoi(argv[3]);
         k = atoi(argv[4]);
 
+        if(n <= 0 || d <= 0 || k <= 0){
+            printf("Error: arguments cannot be <= 0\n");
+            exit(-1);
+        }
+
         pr = argv[5];
         if(argc == 6 && !strcmp("print", pr)){
             print = true;
