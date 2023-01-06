@@ -2,6 +2,8 @@
 #include "arrayMaker.h"
 
 int main(int argc, char** argv){
+    srand(time(NULL));
+
     int n, m, d, k;
     char* filepath;
     char* pr;
@@ -16,9 +18,8 @@ int main(int argc, char** argv){
         d = atoi(argv[3]);
         k = atoi(argv[4]);
 
-        strcpy(substring, "print");
         pr = argv[5];
-        if(argc == 6 && strstr(pr, substring) != NULL){
+        if(argc == 6 && !strcmp("print", pr)){
             print = true;
         }
     }
@@ -57,7 +58,7 @@ int main(int argc, char** argv){
         int knnSize = k * m;
         if(!strcmp("random", filepath))
             printPoints(Y, n, d);
-        printResult(&knn);
+        printResult(&knn, m);
     }
 
     free(knn.ndist);

@@ -1,4 +1,5 @@
 #include "knn.h"
+#include "arrayMaker.h"
 #include <mpi.h>
 
 int main(int argc, char** argv){
@@ -9,40 +10,64 @@ int main(int argc, char** argv){
     MPI_Comm_size(MPI_COMM_WORLD, &p);
     MPI_Comm_rank(MPI_COMM_WORLD, &SelfTID);
 
-    const int n = 8 / p;   
-    const int d = 2;
-    const int k = 4;
+    srand(time(NULL) + SelfTID);
 
-    //init all corpus points
-    //double* X = getArrayFromTxt("s1.txt", n * p, d);
+    int numOfPoints, n, d, k;
 
-    double Xall[] = {2.0, 4.8,
-                     2.0, 1.0,
-                     4.0, 4.0,
-                     5.0, 5.0,
-                     5.0, 1.0,
-                     6.0, 3.0,
-                     7.0, 2.0,
-                     3.0, 3.5};
+    char* filepath;
+    char* pr;
+    bool print = false;
 
-    if(SelfTID == 0){
-        printf("Num of tasks: %d\n", p);
-        printf("Array length for each task: %d\n", n);
-        printArrayDouble(Xall, n * p * d);
+    char substring[6];
+    
+    if(argc >= 5){
+        filepath = argv[1];
+        numOfPoints = atoi(argv[2]);
+        n = (numOfPoints + p - 1) / p;
+        d = atoi(argv[3]);
+        k = atoi(argv[4]);
+
+        pr = argv[5];
+        if(argc == 6 && !strcmp("print", pr)){
+            print = true;
+        }
     }
 
-    double* X = (double *) malloc(n * d * sizeof(double));
+    if(SelfTID == 0){
+        printf("n = %d\n", n);
+        printf("Loading arrays...\n");
+    } 
 
-    //Distribute Xall to each task
-    MPI_Scatter(Xall, n * d, MPI_DOUBLE, X, n * d, MPI_DOUBLE, 0, MPI_COMM_WORLD);
+    double* X;
+    double* Xall;
+    strcpy(substring, "ubyte");
 
-    printf("X of Task %d:\n", SelfTID);
-    printArrayDouble(X, n * d);
+    if(!strcmp("random", filepath)){
+        X = getRandomArray(n, d);
+    }
+    else if(strstr(filepath, substring) != NULL){
+        X = getMinstArray(filepath, SelfTID * n, (SelfTID + 1) * n);
+    }
+    else{
+        X = getArrayFromTxt(filepath, n * p, d, SelfTID * n, (SelfTID + 1) * n);
+    }
+
+    double starttime, endtime;
+    double duration;
+    
+    if(SelfTID == 0){
+        printf("Num of tasks: %d\n", p);
+        printf("Array length for each task: %d\n", n * d);
+        printf("---------------------------------------------\n");
+        //printArrayDouble(Xall, n * p * d);
+    }
+    starttime = MPI_Wtime();
+
+    // printf("X of Task %d:\n", SelfTID);
+    //printArrayDouble(X, n * d);
     
     //Get knn result from each process
     knnresult knn = distrAllkNN(X, n, d, k);
-
-    sleep(1);
 
     knnresult knnAll;
     knnAll.ndist = NULL;
@@ -60,10 +85,15 @@ int main(int argc, char** argv){
     MPI_Gather(knn.ndist, n * k, MPI_DOUBLE, knnAll.ndist, n * k, MPI_DOUBLE, 0, MPI_COMM_WORLD);
     MPI_Gather(knn.nidx, n * k, MPI_INT, knnAll.nidx, n * k, MPI_INT, 0, MPI_COMM_WORLD);
 
-    if(SelfTID == 0){
-        printArrayDouble(knnAll.ndist, n * p * k);
-        printArrayInt(knnAll.nidx, n * p * k);
-    } 
+    endtime = MPI_Wtime();
+
+    duration = endtime - starttime;
+    printf("[Async kNN took %f seconds for task %d]\n", duration, SelfTID);
+
+    if(SelfTID == 0 && print){
+        printf("\nEnd result:\n");
+        printResult(&knnAll, numOfPoints);
+    }
 
     MPI_Finalize();
 

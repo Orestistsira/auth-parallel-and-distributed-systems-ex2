@@ -7,7 +7,7 @@
 
 void printArrayDouble(double* arr, int size){
     for(int i=0;i<size;i++){
-        printf("%1.1f ", arr[i]);
+        printf("%f ", arr[i]);
     }
     printf("\n");
 }
@@ -108,7 +108,7 @@ knnresult kNN(double* X, double* Y, int n, int m, int d, int k){
     if(k > n){
         ERROR("In kNN, k can't be greater than n");
         exit(1);
-    }
+    }    
 
     struct timeval startwtime, endwtime;
     double duration;
