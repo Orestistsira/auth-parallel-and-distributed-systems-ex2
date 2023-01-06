@@ -8,6 +8,7 @@
 #include <unistd.h>
 #include <time.h>
 #include <float.h>
+#include <stdbool.h>
 
 typedef struct knnresult{
     int* nidx;

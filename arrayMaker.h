@@ -46,8 +46,10 @@ double* getArrayFromTxt(char* filename, int numOfpoints, int dimensions, int sta
     return Y;
 }
 
-double* getRandomArray(int numOfpoints, int dimensions){
-    int size = numOfpoints * dimensions;
+double* getRandomArray(int numOfPoints, int dimensions){
+    srand(time(NULL));
+
+    int size = numOfPoints * dimensions;
     double* Y = (double*) malloc(size * sizeof(double));
 
     for(int i=0;i<size;i++){
@@ -125,4 +127,30 @@ double* getMinstArray(char* filepath, int startingRow, int endingRow){
     }
     
     return Y;
+}
+
+void printPoints(double* Y, int n, int d){
+    printf("\nPoints:\n------------ \n");
+
+    for(int i=0;i<n;i++){
+        printf("Point %d: [ ", i);
+        for(int j=0;j<d;j++){
+            printf("%f ", Y[i * d + j]);
+        }
+        printf("]\n");
+    }
+}
+
+void printResult(knnresult* knn){
+    int m = knn->m;
+    int k = knn->k;
+    printf("\nResult:\n------------\n");
+
+    for(int i=0;i<m;i++){
+        printf("Point %d: [ %d Nearest Neighbour(s): ", i, k);
+        for(int j=0;j<k;j++){
+            printf("%d ", knn->nidx[i * k + j]);
+        }
+        printf("]\n");
+    }
 }
