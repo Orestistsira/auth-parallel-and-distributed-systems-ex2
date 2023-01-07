@@ -1,7 +1,8 @@
 a.out
-tester.c
-tester.h
 data/
 .vscode/
 knn.out
 knn-async.out
+knn-results.txt
+knn-async-results.txt
+mpi-knn-async.sh
