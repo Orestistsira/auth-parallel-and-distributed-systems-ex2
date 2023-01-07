@@ -1,10 +1,10 @@
 SHELL := /bin/bash
 
 CC       = gcc
-FLAGS    = -lm -lopenblas -fopenmp -O3 -g
+FLAGS    = -lm -lopenblas -O3 -g
 
 CC_MPI   = mpicc
-FLAGS_MPI= -lm -lopenblas -fopenmp -O3 -g
+FLAGS_MPI= -lm -lopenblas -O3 -g
 
 knn: main.c knn.c
 	$(CC) main.c knn.c $(FLAGS) -o knn.out

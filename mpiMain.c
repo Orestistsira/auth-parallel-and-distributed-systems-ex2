@@ -93,11 +93,14 @@ int main(int argc, char** argv){
     endtime = MPI_Wtime();
 
     duration = endtime - starttime;
-    printf("[Async kNN took %f seconds for task %d]\n", duration, SelfTID);
 
-    if(SelfTID == 0 && print){
-        printf("\nEnd result:\n");
-        printResult(&knnAll, numOfPoints);
+    if(SelfTID == 0){
+        printf("[Async kNN took %f seconds for task %d]\n", duration, SelfTID);
+
+        if(print){
+            printf("\nEnd result:\n");
+            printResult(&knnAll, numOfPoints);
+        }
     }
 
     MPI_Finalize();

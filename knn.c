@@ -98,9 +98,6 @@ knnresult kNN(double* X, double* Y, int n, int m, int d, int k){
     knn.ndist = (double*) malloc(knnSize * sizeof(double));
     knn.nidx = (int*) malloc(knnSize * sizeof(int));
 
-    const int xSize = m * d;
-    const int ySize = n * d;
-
     //Init distances
     int distancesSize = n * m;
     double* D = (double *) malloc(distancesSize * sizeof(double));
