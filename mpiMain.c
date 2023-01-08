@@ -65,6 +65,8 @@ int main(int argc, char** argv){
         printf("Array length for each task: %d\n", n * d);
         printf("---------------------------------------------\n");
     }
+
+    MPI_Barrier(MPI_COMM_WORLD);
     starttime = MPI_Wtime();
     
     //Get knn result from each process
@@ -86,6 +88,7 @@ int main(int argc, char** argv){
     MPI_Gather(knn.ndist, n * k, MPI_DOUBLE, knnAll.ndist, n * k, MPI_DOUBLE, 0, MPI_COMM_WORLD);
     MPI_Gather(knn.nidx, n * k, MPI_INT, knnAll.nidx, n * k, MPI_INT, 0, MPI_COMM_WORLD);
 
+    MPI_Barrier(MPI_COMM_WORLD);
     endtime = MPI_Wtime();
 
     duration = endtime - starttime;
