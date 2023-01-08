@@ -25,10 +25,6 @@ knnresult distrAllkNN(double* X, int n, int d, int k){
     //Allocate Z for the incoming messages
     double* Z = (double *) malloc(n * d * sizeof(double));
 
-    // printf("Y of Task %d:\n", SelfTID);
-    // printArrayDouble(Y, n * d);
-
-    //TODO: Do it without temp arrays
     //Allocate temp arrays to compare the results and find the nearest points
     double* ndistTemp = (double*) malloc(2 * k * sizeof(double));
     int* nidxTemp = (int*) malloc(2 * k * sizeof(int));
@@ -59,12 +55,6 @@ knnresult distrAllkNN(double* X, int n, int d, int k){
             }
         }
 
-        // printf("Task %d knn ", SelfTID);
-        // printf("result:\n");
-        // printArrayDouble(knn.ndist, k * n);
-        // printArrayInt(knn.nidx, k * n);
-        // printf("\n");
-
         int tempIndex = 0;
         //Calculate knnAll
         //for current point i, check if there is a shorter distance in knn than those in knnAll
@@ -81,8 +71,6 @@ knnresult distrAllkNN(double* X, int n, int d, int k){
                 ndistTemp[tempIndex] = knn.ndist[i * k + j];
                 nidxTemp[tempIndex++] = knn.nidx[i * k + j];
             }
-            // printf("Task %d temp:\n", SelfTID);
-            // printArrayDouble(ndistTemp, 2 * k);
 
             quickSort(ndistTemp, nidxTemp, 0, 2 * k - 1, k);
 
@@ -91,14 +79,7 @@ knnresult distrAllkNN(double* X, int n, int d, int k){
                 knnAll.nidx[i * k + j] = nidxTemp[j];
             }
         }
-
-        // printf("Task %d knn ", SelfTID);
-        // printf("result all:\n");
-        // printArrayDouble(knnAll.ndist, k * n);
-        // printArrayInt(knnAll.nidx, k * n);
-        // printf("\n");
-
-        
+ 
         if(pass < p - 1){
             MPI_Wait(&mpireqSend, &mpistat);
             MPI_Wait(&mpireqRecv, &mpistat);
@@ -108,22 +89,10 @@ knnresult distrAllkNN(double* X, int n, int d, int k){
         double* temp = Y;
         Y = Z;
         Z = temp;
-        //DONE?: use pointers, do not copy array
-        //Y = copyArray(Z, n * d);
-
-        // printf("Y of Task %d changed:\n", SelfTID);
-        // printArrayDouble(Y, n * d);
 
         free(knn.ndist);
         free(knn.nidx);
     }
-
-    // printf("\n");
-    // printf("Task %d knn ", SelfTID);
-    // printf("result all:\n");
-    // printArrayDouble(knnAll.ndist, k * n);
-    // printArrayInt(knnAll.nidx, k * n);
-    // printf("\n");
     
     free(X);
     free(Y);

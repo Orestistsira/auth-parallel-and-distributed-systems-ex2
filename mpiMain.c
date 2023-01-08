@@ -64,12 +64,8 @@ int main(int argc, char** argv){
         printf("Num of tasks: %d\n", p);
         printf("Array length for each task: %d\n", n * d);
         printf("---------------------------------------------\n");
-        //printArrayDouble(Xall, n * p * d);
     }
     starttime = MPI_Wtime();
-
-    // printf("X of Task %d:\n", SelfTID);
-    //printArrayDouble(X, n * d);
     
     //Get knn result from each process
     knnresult knn = distrAllkNN(X, n, d, k);
