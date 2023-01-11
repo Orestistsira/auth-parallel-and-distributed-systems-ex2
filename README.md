@@ -44,7 +44,7 @@ make knn
 
 E.g. ./knn.out ./data/regular3d.txt 27 3 27 print
 
-1. To run mpi asynchronus code
+2. To run mpi asynchronus code
 
 ```
 
@@ -59,5 +59,24 @@ or
 ```
 
 mpiexec -n 4 ./knn-async.out [filepath] [n] [d] [k] [print]
+
+```
+---
+
+Run code on HPC get scripts from /script folder
+
+1. To run sequential code
+
+```
+
+sbatch knn.sh [filepath] [n] [d] [k] [print]
+
+```
+
+2. To run mpi asynchronus code on 4 nodes
+
+```
+
+sbatch knn-async.sh [filepath] [n] [d] [k] [print]
 
 ```
