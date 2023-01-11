@@ -93,4 +93,4 @@ make tester
 
 ```
 
-*The tester is very simple as i did not have more time*
+*The tester is very simple and not always coorect as i did not have enough time*
