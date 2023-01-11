@@ -63,7 +63,7 @@ int main(int argc, char** argv){
         int knnSize = k * m;
         if(!strcmp("random", filepath))
             printPoints(Y, n, d);
-        printResult(&knn, m);
+        printResult(&knn, m, "knn_result.txt");
     }
 
     free(knn.ndist);

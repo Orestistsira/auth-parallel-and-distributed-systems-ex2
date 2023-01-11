@@ -98,7 +98,7 @@ int main(int argc, char** argv){
 
         if(print){
             printf("\nEnd result:\n");
-            printResult(&knnAll, numOfPoints);
+            printResult(&knnAll, numOfPoints, "knn_async_result.txt");
         }
     }
 

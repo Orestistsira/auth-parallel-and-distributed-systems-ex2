@@ -3,7 +3,8 @@ data/
 .vscode/
 knn.out
 knn-async.out
-knn-results.txt
-knn-async-results.txt
+knn_result.txt
+knn_async_result.txt
 mpi-knn-async.sh
 Report.odt
+tester.out

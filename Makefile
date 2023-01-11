@@ -12,5 +12,8 @@ knn: main.c knn.c
 knn-async: mpiMain.c asyncKnn.c
 	$(CC_MPI) mpiMain.c asyncKnn.c knn.c $(FLAGS_MPI) -o knn-async.out
 
+tester: regularGridTester.c
+	$(CC) regularGridTester.c -o tester.out
+
 clean:
 	$(RM) knn.out
