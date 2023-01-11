@@ -16,7 +16,9 @@ sudo apt-get install libopenblas-dev
 
 ---
 
-(print writes the output to a file, it can be skipped for all commands)
+** Compile and Run the code**
+
+- print writes the output to a file, it can be skipped for all commands
 
 1. To run sequential code
 
