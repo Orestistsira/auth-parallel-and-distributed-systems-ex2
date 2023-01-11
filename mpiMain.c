@@ -97,7 +97,6 @@ int main(int argc, char** argv){
         printf("[Async kNN took %f seconds for task %d]\n", duration, SelfTID);
 
         if(print){
-            printf("\nEnd result:\n");
             printResult(&knnAll, numOfPoints, "knn_async_result.txt");
         }
     }

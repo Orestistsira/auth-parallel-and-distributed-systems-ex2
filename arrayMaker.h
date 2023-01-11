@@ -127,42 +127,18 @@ double* getMinstArray(char* filepath, int startingRow, int endingRow){
     return Y;
 }
 
-void printPoints(double* Y, int n, int d){
-    printf("\nPoints:\n------------ \n");
-
-    for(int i=0;i<n;i++){
-        printf("Point %d: [ ", i);
-        for(int j=0;j<d;j++){
-            printf("%f ", Y[i * d + j]);
-        }
-        printf("]\n");
-    }
-}
-
 void printResult(knnresult* knn, int n, const char* filename){
     int k = knn->k;
     FILE* f;
-    printf("\nResult:\n------------\n");
 
     f = fopen(filename, "w");
 
     for(int i=0;i<n;i++){
-        printf("Point %d: [ %d Nearest Neighbour(s): ", i, k);
         for(int j=0;j<k;j++){
-            printf("%d->(d=%1.2f) ", knn->nidx[i * k + j], knn->ndist[i * k + j]);
             fprintf(f, "%d %f ", knn->nidx[i * k + j], knn->ndist[i * k + j]);
         }
-        printf("]\n");
         fprintf(f, "\n");
     }
 
     fclose(f);
-}
-
-void checkResults(int n, int k){
-
-    FILE *f1, *f2;
-
-    
-
 }
