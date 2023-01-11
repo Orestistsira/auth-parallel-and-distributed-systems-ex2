@@ -22,6 +22,8 @@ sudo apt-get install libopenblas-dev
 
 Compile and Run the code
 
+- filepath = path to txt/mnist file (random can be put to execute code for random dataset)
+
 - n = number of points
 
 - d = dimensions
