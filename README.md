@@ -1,6 +1,16 @@
 # auth-parallel-and-distributed-systems-ex2
 
+Compilers:
+
+gcc (11.3.0)
+
+---
+
+```
+
 sudo apt-get install libopenblas-dev
+
+```
 
 make knn
 
