@@ -80,3 +80,17 @@ sbatch knn.sh [filepath] [n] [d] [k] [print]
 sbatch knn-async.sh [filepath] [n] [d] [k] [print]
 
 ```
+
+---
+
+To check if the regular grid file outputs of sequential code are correct
+
+```
+
+make tester
+
+./tester [n] [d] [k]
+
+```
+
+*The tester is very simple as i did not have more time*
