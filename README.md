@@ -1,5 +1,9 @@
 # auth-parallel-and-distributed-systems-ex2
 
+**k Nearest Neighbors**
+
+---
+
 Compilers:
 
 gcc (11.3.0)
@@ -16,7 +20,13 @@ sudo apt-get install libopenblas-dev
 
 ---
 
-** Compile and Run the code**
+Compile and Run the code
+
+- n = number of points
+
+- d = dimensions
+
+- k = number of neighbors
 
 - print writes the output to a file, it can be skipped for all commands
 
