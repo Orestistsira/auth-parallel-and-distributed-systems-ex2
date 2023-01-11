@@ -10,7 +10,7 @@ gcc (11.3.0)
 
 ---
 
-If you don't have openblas installed:
+If you don't have openblas installed on Linux:
 
 ```
 
